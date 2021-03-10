@@ -13,72 +13,77 @@
       <div class="row">
          <div class="col-12">
             <h1 class="products-title"><%= title %></h1>
+            <input id="categoria" type="hidden" value=<%= title %>></input>
          </div>
       </div>
       <div class="product-detail">
          <div class="row">
-            <div class="col-8 row products-container pl-5">
- 
-               <% products.forEach(product => { %>
-				
-                  <div class="col-12 col-sm-6 col-lg-4">
-                     <section class="product-box">
-                        <a href="/products/detail/<%= product.id %> ">
-                           <figure class="product-box_image">
-                              <img src="/images/products/<%= product.image %>" alt="<%= product.name %>">
-                           </figure>
-                           <article class="product-box_data">
-                              <h2>$<%= helpers.trunc(product.price - product.price * product.discount / 100) %></h2>
-                              <% if(product.discount > 0) { %>
-                              <span><%= product.discount %> % OFF</span>
-                              <% } %>
-                              <p><%= product.name %></p>
-                              <i class="fas fa-truck"></i>
-                           </article>
-                        </a>
-                     </section>
-                  </div>
-				<% }); %>
-               
+            <input id="categoria" type="hidden" value=<%= title %>></input>
+
+            <% products.forEach(product => { %>
+
+            <div class="col-12 col-sm-6 col-lg-4">
+               <section class="product-box">
+                  <a href="/products/detail/<%= product.id %> ">
+                     <figure class="product-box_image">
+                        <img src="/images/products/<%= product.image %>" alt="<%= product.name %>">
+                     </figure>
+                     <article class="product-box_data">
+                        <h2>$<%= helpers.trunc(product.price - product.price * product.discount / 100) %></h2>
+                        <% if(product.discount > 0) { %>
+                        <span><%= product.discount %> % OFF</span>
+                        <% } %>
+                        <p><%= product.name %></p>
+                        <i class="fas fa-truck"></i>
+                     </article>
+                  </a>
+               </section>
             </div>
-            <div class="col-12 col-lg-4">
-               <article class="product-detail-info">
-                  <h2 class="product-detail-title categories" style="font-size: 20px; cursor: pointer;" id="allProducts">
-                     Todos los productos
+            <% }); %>
+
+         </div>
+         <div class="col-12 col-lg-4">
+            <article class="product-detail-info">
+               <h2 class="product-detail-title categories" style="font-size: 20px; cursor: pointer;" id="allProducts">
+                  Todos los productos
+               </h2>
+               <hr>
+
+               <% if (categories.length > 0) { %>
+
+               <% categories.forEach(category => { %>
+               <% if (category.products.length > 0) { %>
+               <a href="/products/categories/<%= category.name %>">
+                  <h2 class="product-detail-title categories" style="font-size: 15px; cursor: pointer;"
+                     id="<%= category.name %>">
+                     <%= category.name %>
                   </h2>
-                  <hr>
+               </a>
+               <hr>
+               <% } %>
 
-                  <% if (categories.length > 0) { %>
+               <% }) %>
 
-                  <% categories.forEach(category => { %>
-                     <% if (category.products.length > 0) { %>
-                        <a href="/products/categories/<%= category.name %>">
-                           <h2 class="product-detail-title categories" style="font-size: 15px; cursor: pointer;" id="<%= category.name %>">
-                              <%= category.name %> 
-                           </h2>
-                        </a>
-                        <hr>
-                     <% } %>
-                     
-                  <% }) %>
+               <% } %>
 
-                  <% } %>
-                  
-                  
-               </article>
-            </div>
+
+            </article>
          </div>
       </div>
-      <% } else { %>
-      <div class="col-12">
-         <h2 class="products-title" style="padding: 100px 0; color: tomato;">Todavía no hay productos para catalogar.</h2>
-      </div>
-      <% } %>
+   </div>
+   <% } else { %>
+   <div class="col-12">
+      <h2 class="products-title" style="padding: 100px 0; color: tomato;">Todavía no hay productos para catalogar.
+      </h2>
+   </div>
+   <% } %>
    </div>
 
    <!-- footer -->
    <%- include('../partials/footer') %>
    <!-- /footer -->
+
+   <script src="/js/categories.js"></script>
 </body>
 
 </html>

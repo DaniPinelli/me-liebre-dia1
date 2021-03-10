@@ -8,29 +8,33 @@ const Op = Sequelize.Op;
 
 module.exports = {
     latest(req, res) {
+
         const ultimos = Product.findAll({
                 order: [
                     ['createdAt', 'DESC']
                 ]
             })
+
             .then(function (ultimos) {
+
                 let respuesta = {
-                    'meta': {
-                        'status': 200,
-                        'count': ultimos.length,
-                        'url': '/api/products/latest'
+
+                    "meta": {
+                        "status": 200,
+                        "count": ultimos.length,
+                        "url": "/api/products/latest"
                     },
-                    'data': {
+                    "data": {
                         ultimos
                     }
                 };
+
                 res.json(respuesta)
             })
             .catch(e => console.log(e));
     },
 
     offers(req, res) {
-
         const inSale = Product.findAll({
                 order: [
                     ['discount', 'DESC']
@@ -44,7 +48,6 @@ module.exports = {
             .then(function (inSale) {
 
                 let respuesta = {
-
                     "meta": {
                         "status": 200,
                         "count": inSale.length,
@@ -60,4 +63,4 @@ module.exports = {
             })
             .catch(e => console.log(e));
     }
-};
+}
