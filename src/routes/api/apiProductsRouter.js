@@ -5,5 +5,6 @@ const apiProductsController = require('../../controllers/api/apiProductsControll
 
 router.get('/latest', apiProductsController.latest);
 router.get('/offers', apiProductsController.offers);
+router.get('/categories/:category?', apiProductsController.categories);
 
 module.exports = router;

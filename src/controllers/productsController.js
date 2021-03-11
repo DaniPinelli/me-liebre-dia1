@@ -1,59 +1,74 @@
-const { validationResult } = require('express-validator');
+const {
+	validationResult
+} = require('express-validator');
 const createError = require('http-errors');
 
 // ******** Sequelize ***********
 
-const { Product, Brand, Category } = require('../database/models');
+const {
+	Product,
+	Brand,
+	Category
+} = require('../database/models');
 
 module.exports = {
-	
-	// Root - Show all products
-	async index (req, res, next) {
 
-		if(Number(req.params.page)){
+	// Root - Show all products
+	async index(req, res, next) {
+
+		if (Number(req.params.page)) {
 			let products = await Product.findAll({
 				limit: 4,
 				offset: (req.params.page - 1) * 4
 			})
-			
+
 			let nextProducts = await Product.findAll({
 				limit: 4,
 				offset: req.params.page * 4
 			});
-			if(products.length > 0){
-				return res.render('products/products', { products, nextProducts, page: req.params.page})
+			if (products.length > 0) {
+				return res.render('products/products', {
+					products,
+					nextProducts,
+					page: req.params.page
+				})
 			}
 			return next(createError(404))
 		} else {
 			// return res.status(500).send('Something broke! :(')
 			return next(createError(404))
 		}
-		
+
 	},
 
 	// Detail - Detail from one product
-	detail (req, res) {
+	detail(req, res) {
 		Product.findByPk(req.params.id)
-			.then(product => res.render('products/detail', { product }))
+			.then(product => res.render('products/detail', {
+				product
+			}))
 			.catch(e => console.log(e));
 	},
 
 	// Create - Form to create
-	create (req, res) {
+	create(req, res) {
 		const categories = Category.findAll();
 		const brands = Brand.findAll();
 
 		Promise.all([categories, brands])
-			.then(([categories, brands]) => res.render('products/product-create-form', { categories, brands }))
+			.then(([categories, brands]) => res.render('products/product-create-form', {
+				categories,
+				brands
+			}))
 			.catch(e => console.log(e));
 	},
-	
+
 	// Create -  Method to store
-	store (req, res) {
+	store(req, res) {
 
 		const errors = validationResult(req);
 
-		if(errors.isEmpty()){
+		if (errors.isEmpty()) {
 			const _body = req.body;
 			_body.price = Number(req.body.price);
 			_body.discount = Number(req.body.discount);
@@ -73,24 +88,33 @@ module.exports = {
 			const brands = Brand.findAll();
 
 			Promise.all([categories, brands])
-				.then(([categories, brands]) => res.render('products/product-create-form', { categories, brands, errors: errors.mapped(), old: req.body }))
+				.then(([categories, brands]) => res.render('products/product-create-form', {
+					categories,
+					brands,
+					errors: errors.mapped(),
+					old: req.body
+				}))
 				.catch(e => console.log(e));
 		}
 
 	},
 
 	// Update - Form to edit
-	edit (req, res) {
+	edit(req, res) {
 		const product = Product.findByPk(req.params.id);
 		const categories = Category.findAll();
 		const brands = Brand.findAll();
 
 		Promise.all([product, categories, brands])
-			.then(([product, categories, brands]) => res.render('products/product-edit-form', { product, categories, brands }))
+			.then(([product, categories, brands]) => res.render('products/product-edit-form', {
+				product,
+				categories,
+				brands
+			}))
 			.catch(e => console.log(e));
 	},
 	// Update - Method to update
-	update (req, res) {
+	update(req, res) {
 
 		const errors = validationResult(req);
 
@@ -124,38 +148,37 @@ module.exports = {
 			const brands = Brand.findAll();
 
 			console.log(req.body)
-	
+
 			Promise.all([categories, brands])
 				.then(([categories, brands]) => {
-					
+
 					return res.render(
-						'products/product-edit-form',
-						{ 
+						'products/product-edit-form', {
 							product: req.body,
 							id: req.params.id,
 							categories,
 							brands,
 							errors: errors.mapped()
-					})
+						})
 				})
 				.catch(e => console.log(e));
 		}
 	},
 
 	// Delete - Delete one product from DB
-	destroy (req, res) {
+	destroy(req, res) {
 		Product.destroy({
-			where: {
-				id: req.params.id
-			},
-			force: true
-		})
+				where: {
+					id: req.params.id
+				},
+				force: true
+			})
 			.then(confirm => {
 				res.redirect('/')
 			})
 			.catch(e => console.log(e));
 	},
-	async categories (req, res) {
+	async categories(req, res) {
 		let where = {};
 		let products = [];
 		let title = "Todos los productos";
@@ -163,13 +186,13 @@ module.exports = {
 		if (req.params.category) {
 			let category = await Category.findOne({
 				where: {
-				   name: req.params.category
+					name: req.params.category
 				},
 				include: ['products']
 			});
-			
+
 			title = req.params.category;
-			 
+
 			if (category) {
 				products = category.products
 			};
@@ -181,6 +204,11 @@ module.exports = {
 			include: ['products']
 		});
 
-		return res.render('products/categories', { products, categories, title })
+		return res.render('products/categories', {
+			products,
+			categories,
+			title,
+			category: req.params.category
+		})
 	}
 }

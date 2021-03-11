@@ -62,5 +62,63 @@ module.exports = {
                 res.json(respuesta)
             })
             .catch(e => console.log(e));
+    },
+
+    categories(req, res) {
+        let products = [];
+        let title = "Todos los productos";
+
+        console.log(req.params)
+
+        if (req.params.category != undefined) {
+
+            title = req.params.category;
+
+            let category = Category.findOne({
+                    where: {
+                        name: req.params.category
+                    },
+                    include: ['products']
+                })
+
+                .then(function (category) {
+                    let respuesta = {
+                        "meta": {
+                            "status": 201,
+                            "title": title,
+                            "count": category.products.length,
+                            "url": "/api/products/categories/" + category.name
+                        },
+                        "data": {
+                            category
+                        }
+                    };
+
+                    res.json(respuesta)
+                })
+                .catch(e => console.log(e));
+
+        } else {
+            products = Product.findAll({
+                    order: [
+                        ['categoryId']
+                    ]
+                })
+                .then(function (products) {
+                    let respuesta = {
+                        "meta": {
+                            "status": 200,
+                            "title": 'Todas las categorías',
+                            "url": "/api/products/categories/"
+                        },
+                        "data": {
+                            products
+                        }
+                    };
+
+                    res.json(respuesta)
+                })
+                .catch(e => console.log(e));
+        }
     }
 }
